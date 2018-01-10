@@ -183,6 +183,9 @@ def get(handler):
         
     elif handler.path =="/html/newui":
         sendFile("newui.html","text/html")
+
+    elif handler.path == "/html/master":
+        sendFile("master.html", "text/html")
          
     elif handler.path.startswith("/html/js"):
          path, filename = os.path.split(handler.path)
@@ -387,6 +390,8 @@ def get(handler):
         output("<br />")
 
         output(link("new interface", "/html/newui"))
+        output(" | ")
+        output(link("modern interface", "/html/master"))
 
         startTable(caption = "Rules", class_style = "rules")
 
