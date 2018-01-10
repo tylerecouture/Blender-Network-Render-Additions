@@ -34,8 +34,20 @@ var maxItemsperTable = 10;
 
 function setupPage() {
 
-	// /* JOBS */
-	// $("#b_jobCancel").remove();
+	/* JOBS */
+
+	$("section#jobs table").bootstrapTable();
+
+    //function createTable(parent, name, header, objects, f_cell, viewH, f_displayrow) {
+
+
+
+
+
+	//$("#b_jobCancel").remove();
+
+
+
     //
 	// createTable("#jobs_Panelcontent", "jobsTable", jobTableHeader, jobs, celladd);
 	// $("#jobsTable button").button();
@@ -53,10 +65,26 @@ function setupPage() {
 	// var refreshJobsData = window.setInterval(updateJobsData, 5000);
 }
 
-function generateBootstrapTable() {
-
-}
-
+// function ajaxJobs(params) {
+//     // data you need
+//     console.log(params.data);
+//     // just use setTimeout
+//
+//     $.ajax({
+// 		type : 'GET',
+// 		url : '/html/jobs',
+// 		dataType : 'json',
+// 		contentType : 'application/json',
+// 		success : function(jobs) {
+// 		    params.success({
+//                 "rows": jobs,
+//                 "total": jobs.length
+//             })
+// 		    console.log(jobs);
+// 			//updateJobsTable(jobs);
+// 		}
+// 	});
+// }
 
 function updateJobsData() {
 	$.ajax({
@@ -65,7 +93,8 @@ function updateJobsData() {
 		dataType : 'json',
 		contentType : 'application/json',
 		success : function(jobs) {
-			changeJobsTable(jobs);
+		    console.log(jobs);
+			//updateJobsTable(jobs);
 		}
 	});
 }

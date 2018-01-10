@@ -11,7 +11,30 @@
 
   <section id="jobs">
     <h2>Jobs</h2>
-    <table></table>
+    <table id="jobsTable" class="table table-striped"
+           data-ajax="ajaxJobs"
+    >
+      <thead>
+      <tr>
+        <th data-field="action"></th>
+        <th data-field="id">ID</th>
+        <th data-field="name">Name</th>
+        <th data-field="category">Category</th>
+        <th data-field="tags">Category</th>
+        <th data-field="type">Type</th>
+        <th data-field="chunks">Chunks</th>
+        <th data-field="priority">Priority</th>
+        <th data-field="usage">Usage</th>
+        <th data-field="wait">Wait</th>
+        <th data-field="length">Length</th>
+        <th data-field="done">Done</th>
+        <th data-field="dispatched">Sent</th>
+        <th data-field="error">Error</th>
+        <th data-field="priority">Priority</th>
+        <th data-field="exception">Exception</th>
+      </tr>
+      </thead>
+    </table>
   </section>
 
   <section id="slaves">
@@ -29,8 +52,32 @@
   <script type="text/javascript" src="/html/js/master.js"></script>
 
   <script>
+
     $(document).ready(function(){
-        setupPage();
+      $("section#jobs table").bootstrapTable();
+
+      function ajaxJobs(params) {
+          // data you need
+          console.log(params.data);
+          // just use setTimeout
+
+          $.ajax({
+          type : 'GET',
+          url : '/html/jobs',
+          dataType : 'json',
+          contentType : 'application/json',
+          success : function(jobs) {
+              params.success({
+                      "rows": jobs,
+                      "total": jobs.length
+                  })
+              console.log(jobs);
+            //updateJobsTable(jobs);
+          }
+        });
+      }
+
+
     });
   </script>
 
