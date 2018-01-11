@@ -4,23 +4,39 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <title>Netrender Master Monitor</title>
-  <link  type="text/css" href="/html/css/bootstrap.min.css" rel="stylesheet">
-  <link  type="text/css" href="/html/css/bootstrap-table.min.css" rel="stylesheet">
+  <link type="text/css" href="/html/css/bootstrap.min.css" rel="stylesheet">
+  <link type="text/css" href="/html/css/bootstrap.min.css" rel="stylesheet">
+  <link type="text/css" href="/html/css/bootstrap-table.min.css" rel="stylesheet">
 </head>
 <body>
 
+<div class="container-fluid">
+
   <section id="jobs">
     <h2>Jobs</h2>
-    <table id="jobsTable" class="table table-striped"
+
+    <!--<div id="toolbar"></div>-->
+    <table id="jobsTable"
            data-ajax="ajaxJobs"
+           data-id-field="id"
+           data-show-export="true"
+           data-show-columns="true"
+           data-show-refresh="true"
+           data-pagination="true"
+           data-toolbar="#toolbar"
+           data-search="true"
+           data-show-toggle="true"
     >
+
       <thead>
+
+
       <tr>
         <th data-field="action"></th>
         <th data-field="id">ID</th>
         <th data-field="name">Name</th>
         <th data-field="category">Category</th>
-        <th data-field="tags">Category</th>
+        <th data-field="tags">Tags</th>
         <th data-field="type">Type</th>
         <th data-field="chunks">Chunks</th>
         <th data-field="priority">Priority</th>
@@ -57,84 +73,70 @@
     <h2>Configuration</h2>
   </section>
 
-  <script type="text/javascript" src="/html/js/jquery.min.js"></script>
-  <script type="text/javascript" src="/html/js/bootstrap.min.js"></script>
-  <script type="text/javascript" src="/html/js/bootstrap-table.min.js"></script>
-  <script type="text/javascript" src="/html/js/master.js"></script>
+  <footer>
+    <a href="/" class="btn btn-sm btn-default" role="button">Original UI</a>
+  </footer>
+</div>
 
-  <script>
+<script type="text/javascript" src="/html/js/jquery.min.js"></script>
+<script type="text/javascript" src="/html/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="/html/js/bootstrap-table.min.js"></script>
+<script type="text/javascript" src="/html/js/master.js"></script>
 
-    $(document).ready(function(){
-      //$("section#jobs table").bootstrapTable();
-      $("#slavesTable").bootstrapTable();
-        console.log("ready...");
-//      $.ajax({
-//        type : 'GET',
-//        url : '/html/slaves',
-//        dataType : 'json',
-//        contentType : 'application/json',
-//         success: function(data) {
-//             //alert('done');
-//             $('#clienti').bootstrapTable({
-//                data: mydata
-//             });
-//         },
-//         error: function(e) {
-//             console.log(e.responseText);
-//         }
-//      });
+<script>
+
+    $(document).ready(function () {
+        $("section#jobs table").bootstrapTable();
+        $("#slavesTable").bootstrapTable();
     });
 
     function ajaxJobs(params) {
-      // data you need
-      console.log(params.data);
-      // just use setTimeout
+        // data you need
+        console.log(params.data);
+        // just use setTimeout
 
-      $.ajax({
-        type : 'GET',
-        url : '/html/slaves',
-        dataType : 'json',
-        contentType : 'application/json',
-        success : function(jobs) {
-          params.success({
-            "rows": jobs,
-            "total": jobs.length
-          })
-          console.log(jobs);
-          //updateJobsTable(jobs);
-        },
-        error: function(){
-          console.log('AJAX failed to load jobs');
-        }
-      });
+        $.ajax({
+            type: 'GET',
+            url: '/html/jobs',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (jobs) {
+                console.log(jobs);
+                params.success({
+                    data: jobs,
+                })
+                //updateJobsTable(jobs);
+            },
+            error: function () {
+                alert('AJAX failed to load jobs');
+            }
+        });
     }
 
     function ajaxSlaves(params) {
-      // data you need
-      console.log(params.data);
-      // just use setTimeout
+        // data you need
+        console.log(params.data);
+        // just use setTimeout
 
-      $.ajax({
-        type : 'GET',
-        url : '/html/slaves',
-        dataType : 'json',
-        contentType : 'application/json',
-        success : function(slaves) {
-          console.log(slaves);
-          params.success({
-            data: slaves,
-          });
-
-          //updateJobsTable(jobs);
-        },
-        error: function(){
-          console.log('AJAX failed to load slaves');
-        }
-      });
+        $.ajax({
+            type: 'GET',
+            url: '/html/slaves',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (slaves) {
+                params.success({
+                    data: slaves,
+                });
+                //updateJobsTable(jobs);
+            },
+            error: function () {
+                alert('AJAX failed to load slaves');
+            }
+        });
     }
 
 
-  </script>
+</script>
 
 </body>
 </html>
