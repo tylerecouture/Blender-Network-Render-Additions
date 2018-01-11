@@ -198,6 +198,11 @@ def get(handler):
     elif handler.path.startswith("/html/css"):
          path, filename = os.path.split(handler.path)
          sendFile("css/"+filename,"text/css")
+
+    elif handler.path.startswith("/html/fonts"):
+         path, filename = os.path.split(handler.path)
+         sendFile("fonts/"+filename,"")
+
     # return all master rules information      
     elif handler.path == "/html/rules":
          message = []
