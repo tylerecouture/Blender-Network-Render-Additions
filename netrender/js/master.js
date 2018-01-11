@@ -18,7 +18,7 @@
 
 function ajaxJobs(params) {
     // data you need
-    console.log(params.data);
+    //console.log(params.data);
     // just use setTimeout
 
     $.ajax({
@@ -27,7 +27,8 @@ function ajaxJobs(params) {
         dataType: 'json',
         contentType: 'application/json',
         success: function (jobs) {
-            console.log(jobs);
+            //console.log(jobs);
+            appendJobsData(jobs);
             params.success({
                 data: jobs,
             })
@@ -39,9 +40,31 @@ function ajaxJobs(params) {
     });
 }
 
+function appendJobsData(data) {
+    for( let i = 0; i < data.length; i++)
+    {
+        data[i].action = getJobActionButtons(data[i].id);
+    }
+}
+
+function getJobActionButtons(jobID) {
+    let cancelBtn = generateActionButton(jobID, "Cancel Job", null, "trash" );
+    let pauseBtn = generateActionButton(jobID, "Pause Job", null, "pause" );
+    let resetBtn = generateActionButton(jobID, "Reset Job", null, "repeat" );
+
+    return cancelBtn + " " + pauseBtn + " " + resetBtn;
+
+    function generateActionButton(jobID, title, action, icon) {
+        return '<button type="button" class="btn btn-xs btn-info" ' +
+            'title="' + title + '"><i class="glyphicon glyphicon-' + icon + '"></i></button>';
+    }
+}
+
+
+
 function ajaxSlaves(params) {
     // data you need
-    console.log(params.data);
+    //console.log(params.data);
     // just use setTimeout
 
     $.ajax({
@@ -50,8 +73,10 @@ function ajaxSlaves(params) {
         dataType: 'json',
         contentType: 'application/json',
         success: function (slaves) {
+
             params.success({
                 data: slaves,
+
             });
             //updateJobsTable(jobs);
         },
@@ -61,13 +86,13 @@ function ajaxSlaves(params) {
     });
 }
 
-function timeAgoFormatter(value, row) {
-    return timeago().format(Date.now() - Date(1000 * value));
-}
+
 
 function timeAgoFormatter(value, row) {
     return timeago().format(Date.now() - Date(1000 * value));
 }
+
+
 
 
 
