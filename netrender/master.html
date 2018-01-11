@@ -19,17 +19,16 @@
     <table id="jobsTable"
            data-ajax="ajaxJobs"
            data-id-field="id"
-           data-show-export="true"
-           data-show-columns="true"
-           data-show-refresh="true"
-           data-pagination="true"
            data-toolbar="#toolbar"
+           data-show-export="true"
+           data-show-refresh="true"
+           data-show-columns="true"
+           data-pagination="true"
            data-search="true"
-           data-show-toggle="true"
+           data-sort-name="id"
     >
 
       <thead>
-
 
       <tr>
         <th data-field="action"></th>
@@ -61,7 +60,7 @@
         <th data-field="name">Name</th>
         <th data-field="address">Address</th>
         <th data-field="tags">Tags</th>
-        <th data-field="last_seen">Last Seen</th>
+        <th data-field="last_seen" data-formatter="timeAgoFormatter">Last Seen</th>
         <th data-field="stats">Stats</th>
         <th data-field="type">Job</th>
       </tr>
@@ -81,61 +80,24 @@
 <script type="text/javascript" src="/html/js/jquery.min.js"></script>
 <script type="text/javascript" src="/html/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="/html/js/bootstrap-table.min.js"></script>
+<script type="text/javascript" src="/html/js/timeago.min.js"></script>
 <script type="text/javascript" src="/html/js/master.js"></script>
 
 <script>
-
     $(document).ready(function () {
-        $("section#jobs table").bootstrapTable();
+        $("th").data("sortable", true); // make all table columns sortable
+        //$("th").data("formatter", $(this).html()); // add formatters to all columns
+
+
+        $("#jobsTable").bootstrapTable();
         $("#slavesTable").bootstrapTable();
+
+        $('#slavesTable').on('post-body.bs.table', function (data)
+        {
+            // ...
+        });
+
     });
-
-    function ajaxJobs(params) {
-        // data you need
-        console.log(params.data);
-        // just use setTimeout
-
-        $.ajax({
-            type: 'GET',
-            url: '/html/jobs',
-            dataType: 'json',
-            contentType: 'application/json',
-            success: function (jobs) {
-                console.log(jobs);
-                params.success({
-                    data: jobs,
-                })
-                //updateJobsTable(jobs);
-            },
-            error: function () {
-                alert('AJAX failed to load jobs');
-            }
-        });
-    }
-
-    function ajaxSlaves(params) {
-        // data you need
-        console.log(params.data);
-        // just use setTimeout
-
-        $.ajax({
-            type: 'GET',
-            url: '/html/slaves',
-            dataType: 'json',
-            contentType: 'application/json',
-            success: function (slaves) {
-                params.success({
-                    data: slaves,
-                });
-                //updateJobsTable(jobs);
-            },
-            error: function () {
-                alert('AJAX failed to load slaves');
-            }
-        });
-    }
-
-
 </script>
 
 </body>
