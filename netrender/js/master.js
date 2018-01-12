@@ -43,20 +43,33 @@ function ajaxJobs(params) {
 function appendJobsData(data) {
     for( let i = 0; i < data.length; i++)
     {
-        data[i].action = getJobActionButtons(data[i].id);
+        data[i].actions = generateActionField(data[i].id);
+        data[i].name = generateNameField(data[i].id, data[i].name);
     }
 }
 
-function getJobActionButtons(jobID) {
-    let cancelBtn = generateActionButton(jobID, "Cancel Job", null, "trash" );
-    let pauseBtn = generateActionButton(jobID, "Pause Job", null, "pause" );
-    let resetBtn = generateActionButton(jobID, "Reset Job", null, "repeat" );
+function generateNameField(jobID, name) {
+    name = name.replace(/\.[^/\\.]+$/, ""); // remove file extension (.blend) to save space
+    return '<a href="/html/job' + jobID + '">' + name + '</a>';
+}
 
-    return cancelBtn + " " + pauseBtn + " " + resetBtn;
+function generateActionField(jobID) {
+    let cancelBtn = generateActionButton(jobID, "Cancel Job", "cancel_job('"+jobID+"');", "trash" );
+    let pauseBtn = generateActionButton(jobID, "Pause Job", "request('/pause_"+jobID+"', null);", "pause" );
+    let resetBtn = generateActionButton(jobID, "Reset Job", "request('/reset_all_"+jobID+"_0', null);", "repeat" );
 
-    function generateActionButton(jobID, title, action, icon) {
-        return '<button type="button" class="btn btn-xs btn-info" ' +
-            'title="' + title + '"><i class="glyphicon glyphicon-' + icon + '"></i></button>';
+    let html = '<div class="btn-group" style="display: flex">';
+    html += cancelBtn;
+    html += pauseBtn;
+    html += resetBtn;
+    html += '</div>';
+
+    return html;
+
+    function generateActionButton(jobID, title, onClick, icon) {
+        return '<button type="button" class="btn btn-xs btn-default" ' +
+            'onclick="'+ onClick +'" title="' + title + '">' +
+            '<i class="glyphicon glyphicon-' + icon + '"></i></button>';
     }
 }
 
