@@ -16,6 +16,14 @@
  #
  # ##### END GPL LICENSE BLOCK #####*/
 
+String.prototype.trimOver = function (length) {
+    return this.length > length ? this.substring(0, length) + "..." : this;
+};
+
+function updateJobsData() {
+    $('#jobsTable').bootstrapTable('refresh', '');
+}
+
 function ajaxJobs(params) {
     // data you need
     //console.log(params.data);
@@ -28,7 +36,7 @@ function ajaxJobs(params) {
         contentType: 'application/json',
         success: function (jobs) {
             //console.log(jobs);
-            appendJobsData(jobs);
+            modifyJobsData(jobs);
             params.success({
                 data: jobs,
             })
@@ -40,25 +48,23 @@ function ajaxJobs(params) {
     });
 }
 
-function appendJobsData(data) {
-    for( let i = 0; i < data.length; i++)
-    {
+function modifyJobsData(data) {
+    for (let i = 0; i < data.length; i++) {
         data[i].actions = generateActionField(data[i].id);
         data[i].name = generateNameField(data[i].id, data[i].name);
     }
 }
 
 function generateNameField(jobID, name) {
-    name = name.replace(/\.[^/\\.]+$/, ""); // remove file extension (.blend) to save space
-    return '<a href="/html/job' + jobID + '">' + name + '</a>';
+    return '<a href="/html/job' + jobID + '" title="' + name + '">' + name.trimOver(20) + '</a>';
 }
 
 function generateActionField(jobID) {
-    let cancelBtn = generateActionButton(jobID, "Cancel Job", "cancel_job('"+jobID+"');", "trash" );
-    let pauseBtn = generateActionButton(jobID, "Pause Job", "request('/pause_"+jobID+"', null);", "pause" );
-    let resetBtn = generateActionButton(jobID, "Reset Job", "request('/reset_all_"+jobID+"_0', null);", "repeat" );
+    let cancelBtn = generateActionButton(jobID, "Cancel Job", "cancel_job", "trash");
+    let pauseBtn = generateActionButton(jobID, "Pause Job", "pause_job", "pause");
+    let resetBtn = generateActionButton(jobID, "Reset Job", "reset_job_frames", "repeat");
 
-    let html = '<div class="btn-group" style="display: flex">';
+    let html = '<div class="btn-group">';
     html += cancelBtn;
     html += pauseBtn;
     html += resetBtn;
@@ -66,13 +72,12 @@ function generateActionField(jobID) {
 
     return html;
 
-    function generateActionButton(jobID, title, onClick, icon) {
+    function generateActionButton(jobID, title, action, icon) {
         return '<button type="button" class="btn btn-xs btn-default" ' +
-            'onclick="'+ onClick +'" title="' + title + '">' +
+            'onclick="' + action + '(' + jobID + ');" title="' + title + '">' +
             '<i class="glyphicon glyphicon-' + icon + '"></i></button>';
     }
 }
-
 
 
 function ajaxSlaves(params) {
@@ -100,17 +105,13 @@ function ajaxSlaves(params) {
 }
 
 
-
-function timeAgoFormatter(value, row) {
-    return timeago().format(Date.now() - Date(1000 * value));
+function usageFormatter(value) {
+    return Math.floor(value * 100) + "&nbsp;%";
 }
 
-
-
-
-
-
-
+function timeAgoFormatter(value) {
+    return timeago().format(Date.now() - Date(1000 * value));
+}
 
 
 var rulesTableHeader = ["type", "enabled", "descritpiton", "limit", "value"];
@@ -179,18 +180,6 @@ function setupPage() {
 // 	});
 // }
 
-function updateJobsData() {
-    $.ajax({
-        type: 'GET',
-        url: '/html/jobs',
-        dataType: 'json',
-        contentType: 'application/json',
-        success: function (jobs) {
-            console.log(jobs);
-            //updateJobsTable(jobs);
-        }
-    });
-}
 
 function changeJobsTable(jobs) {
 
@@ -642,3 +631,4 @@ function showJob(id, name) {
     $.getJSON("/html/job_" + id, null, retJobData);
 
 }
+

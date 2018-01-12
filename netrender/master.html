@@ -3,27 +3,29 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <title>Netrender Master Monitor</title>
-  <link type="text/css" href="/html/css/bootstrap.min.css" rel="stylesheet">
+
+  <title>Master Monitor &mdash; Blender Netrender</title>
+  <link rel="icon" href="/html/css/images/favicon.png">
   <link type="text/css" href="/html/css/bootstrap.min.css" rel="stylesheet">
   <link type="text/css" href="/html/css/bootstrap-table.min.css" rel="stylesheet">
+  <link type="text/css" href="/html/css/master.css" rel="stylesheet">
 </head>
 <body>
 
 <div class="container-fluid">
 
   <section id="jobs">
-    <h3>Jobs</h3>
+    <h3 class="table-heading">Jobs</h3>
     <table id="jobsTable"
            data-ajax="ajaxJobs"
            data-id-field="id"
-           data-toolbar="#toolbar"
            data-show-export="true"
            data-show-refresh="true"
            data-show-columns="true"
            data-pagination="true"
            data-search="true"
            data-sort-name="id"
+           data-sort-order="desc"
     >
 
       <thead>
@@ -32,12 +34,12 @@
         <th data-field="actions">Actions</th>
         <th data-field="id">ID</th>
         <th data-field="name">Name</th>
-        <th data-field="category">Category</th>
+        <th data-field="category" data-visible="false">Category</th>
         <th data-field="tags">Tags</th>
-        <th data-field="type">Type</th>
-        <th data-field="chunks">Chunks</th>
-        <th data-field="priority">Priority</th>
-        <th data-field="usage">Usage</th>
+        <th data-field="type" data-visible="false">Type</th>
+        <th data-field="chunks" data-visible="false">Chunks</th>
+        <th data-field="priority" data-visible="false">Priority</th>
+        <th data-field="usage" data-formatter="usageFormatter">Usage</th>
         <th data-field="wait">Wait</th>
         <th data-field="length">Length</th>
         <th data-field="done">Done</th>
@@ -51,7 +53,7 @@
   </section>
 
   <section id="slaves">
-    <h3>Slaves</h3>
+    <h3 class="table-heading">Slaves</h3>
     <table id="slavesTable" class="table table-striped" data-ajax="ajaxSlaves">
       <thead>
       <tr>
@@ -80,15 +82,19 @@
 <script type="text/javascript" src="/html/js/bootstrap-table.min.js"></script>
 <script type="text/javascript" src="/html/js/timeago.min.js"></script>
 <script type="text/javascript" src="/html/js/master.js"></script>
+<script type="text/javascript" src="/html/js/netrender-action.js"></script>
 
 <script>
+    //var allJobFields = ['id', 'name', 'category', 'tags', 'type', 'chunks', 'priority', 'usage', 'wait', 'length', 'done', 'dispatched', 'error', 'priority', 'exception']
     $(document).ready(function () {
-        $("th").data("sortable", true); // make all table columns sortable
-        //$("th").data("formatter", $(this).html()); // add formatters to all columns
+
+        // make columns sortable
+        //let sortableFields = ['id', 'category', 'tags', 'type', 'chunks', 'priority', 'usage', 'wait', 'length', 'done', 'dispatched', 'error', 'priority', 'exception'];
+        $("th").data("sortable", true);
+        $("th[data-field='actions']").removeData("sortable");
 
         $("#jobsTable").bootstrapTable();
         $("#slavesTable").bootstrapTable();
-
 
     });
 </script>

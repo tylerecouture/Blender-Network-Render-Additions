@@ -1,0 +1,21 @@
+
+.fixed-table-container thead th .sortable {
+    padding-right: 18px;
+}
+
+/*h3 + .bootstrap-table > .fixed-table-toolbar {*/
+    /*margin-top: -50px;*/
+/*}*/
+
+h3.table-heading{
+    float: left;
+}
+
+th[data-field='actions'] {
+    min-width: 88px;
+}
+
+td {
+    white-space: nowrap;
+}
+
