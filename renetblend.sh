@@ -10,6 +10,17 @@ cp -rf $DEVNETRENDERLOC $BLENDERLOC/$BLVERS/scripts/addons/
 # stop blender master and slave and others...stop all blenders
 pkill -f blender
 
-$BLENDERLOC/blender -b master.blend --addons netrender -a -noaudio -nojoystick --enable-autoexec
+BLENDPARAMS="--addons netrender -a -noaudio -nojoystick --enable-autoexec"
+x-terminal-emulator -e "$BLENDERLOC/blender -b master.blend $BLENDPARAMS"
+sleep 1
+x-terminal-emulator -e "$BLENDERLOC/blender -b slave.blend $BLENDPARAMS"
+
+sleep 1
+
+IP=$(hostname -I | xargs)
+URL="http://$IP:8000"
+echo $URL
+xdg-open $URL
+
 
 
