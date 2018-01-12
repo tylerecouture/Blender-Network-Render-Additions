@@ -132,7 +132,10 @@ function ajaxSlaves(params) {
 /** COLUMN FORMATTING  **/
 
 function slaveJobFormatter(value, row) {
-    return '<a href="/html/job' + row.job_id + '" title="' + value + '">' + value.trimOver(20) + '</a>';
+    if (row.job_id == 0)
+        return "None";
+    else
+        return '<a href="/html/job' + row.job_id + '" title="' + value + '">' + value.trimOver(20) + '</a>';
 }
 
 function slaveLastSeenFormatter(value) {

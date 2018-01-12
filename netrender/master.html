@@ -16,7 +16,7 @@
 
   <section id="jobs">
     <h3 class="table-heading">Jobs</h3>
-    <table id="jobsTable"
+    <table id="jobsTable" class="bootstrap-table"
            data-ajax="ajaxJobs"
            data-id-field="id"
            data-unique-id="id"
@@ -55,7 +55,8 @@
 
   <section id="slaves">
     <h3 class="table-heading">Slaves</h3>
-    <table id="slavesTable" class="table table-striped" data-ajax="ajaxSlaves">
+    <table id="slavesTable" class="bootstrap-table"
+           data-ajax="ajaxSlaves">
       <thead>
       <tr>
         <th data-field="name">Name</th>
@@ -95,8 +96,15 @@
         $("th").data("sortable", true);
         $("th[data-field='actions']").removeData("sortable");
 
-        $("#jobsTable").bootstrapTable();
-        $("#slavesTable").bootstrapTable();
+        let $bsTables = $('.bootstrap-table');
+
+        $bsTables.bootstrapTable();
+
+        setInterval(function(){
+          $bsTables.bootstrapTable('refresh');
+        }, 5000);
+
+
 
     });
 </script>
