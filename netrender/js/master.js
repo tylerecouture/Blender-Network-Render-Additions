@@ -20,6 +20,13 @@ String.prototype.trimOver = function (length) {
     return this.length > length ? this.substring(0, length) + "..." : this;
 };
 
+
+/*****************************************
+ *
+ *             JOBS
+ *
+ *****************************************/
+
 function updateJobsData() {
     $('#jobsTable').bootstrapTable('refresh', '');
 }
@@ -36,7 +43,7 @@ function ajaxJobs(params) {
         contentType: 'application/json',
         success: function (jobs) {
             //console.log(jobs);
-            modifyJobsData(jobs);
+            appendJobsData(jobs);
             params.success({
                 data: jobs,
             })
@@ -48,15 +55,10 @@ function ajaxJobs(params) {
     });
 }
 
-function modifyJobsData(data) {
+function appendJobsData(data) {
     for (let i = 0; i < data.length; i++) {
         data[i].actions = generateActionField(data[i].id);
-        data[i].name = generateNameField(data[i].id, data[i].name);
     }
-}
-
-function generateNameField(jobID, name) {
-    return '<a href="/html/job' + jobID + '" title="' + name + '">' + name.trimOver(20) + '</a>';
 }
 
 function generateActionField(jobID) {
@@ -78,6 +80,28 @@ function generateActionField(jobID) {
             '<i class="glyphicon glyphicon-' + icon + '"></i></button>';
     }
 }
+
+/******** COLUMN FORMATTING  **********
+ *
+ * formatter(value, row, index, field)
+ * http://bootstrap-table.wenzhixin.net.cn/documentation/#column-options
+ *
+ */
+
+function jobNameFormatter(value, row) {
+    return '<a href="/html/job' + row.id + '" title="' + value + '">' + value.trimOver(20) + '</a>';
+}
+
+function jobUsageFormatter(value) {
+    return Math.floor(value * 100) + "&nbsp;%";
+}
+
+
+/*****************************************
+ *
+ *             SLAVES
+ *
+ *****************************************/
 
 
 function ajaxSlaves(params) {
@@ -105,13 +129,25 @@ function ajaxSlaves(params) {
 }
 
 
-function usageFormatter(value) {
-    return Math.floor(value * 100) + "&nbsp;%";
+/** COLUMN FORMATTING  **/
+
+function slaveJobFormatter(value, row) {
+    return '<a href="/html/job' + row.job_id + '" title="' + value + '">' + value.trimOver(20) + '</a>';
 }
 
-function timeAgoFormatter(value) {
+function slaveLastSeenFormatter(value) {
     return timeago().format(Date.now() - Date(1000 * value));
 }
+
+
+
+
+
+/******************************************************************************************************************************************/
+
+/** OLD STUFF **********/
+
+
 
 
 var rulesTableHeader = ["type", "enabled", "descritpiton", "limit", "value"];

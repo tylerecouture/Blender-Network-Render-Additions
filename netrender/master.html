@@ -19,6 +19,7 @@
     <table id="jobsTable"
            data-ajax="ajaxJobs"
            data-id-field="id"
+           data-unique-id="id"
            data-show-export="true"
            data-show-refresh="true"
            data-show-columns="true"
@@ -33,13 +34,13 @@
       <tr>
         <th data-field="actions">Actions</th>
         <th data-field="id">ID</th>
-        <th data-field="name">Name</th>
+        <th data-field="name" data-formatter="jobNameFormatter">Name</th>
         <th data-field="category" data-visible="false">Category</th>
         <th data-field="tags">Tags</th>
         <th data-field="type" data-visible="false">Type</th>
         <th data-field="chunks" data-visible="false">Chunks</th>
         <th data-field="priority" data-visible="false">Priority</th>
-        <th data-field="usage" data-formatter="usageFormatter">Usage</th>
+        <th data-field="usage" data-formatter="jobUsageFormatter">Usage</th>
         <th data-field="wait">Wait</th>
         <th data-field="length">Length</th>
         <th data-field="done">Done</th>
@@ -60,9 +61,10 @@
         <th data-field="name">Name</th>
         <th data-field="address">Address</th>
         <th data-field="tags">Tags</th>
-        <th data-field="last_seen" data-formatter="timeAgoFormatter">Last Seen</th>
+        <th data-field="last_seen" data-formatter="slaveLastSeenFormatter">Last Seen</th>
         <th data-field="stats">Stats</th>
-        <th data-field="type">Job</th>
+        <th data-field="job_name" data-formatter="slaveJobFormatter">Job</th>
+        <th data-field="job_id" data-visible="false">Job ID</th>
       </tr>
       </thead>
     </table>
