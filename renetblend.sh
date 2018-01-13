@@ -10,7 +10,7 @@ cp -rf $DEVNETRENDERLOC $BLENDERLOC/$BLVERS/scripts/addons/
 
 # stop blender master and slave and others...stop all blenders
 pkill -f blender
-sleep 3
+sleep 1
 
 BLENDPARAMS="--addons netrender -a -noaudio -nojoystick --enable-autoexec"
 RENDERPARAMS="--engine NET_RENDER -a"
@@ -19,10 +19,10 @@ sleep 1
 gnome-terminal -e "$BLENDERLOC/blender -b slave.blend $BLENDPARAMS"
 #gnome-terminal -e "$BLENDERLOC/blender -b renderTest.blend $BLENDPARAMS $RENDERPARAMS"
 
-IP=$(hostname -I | xargs)
-URL="http://$IP:8000"
-echo $URL
-xdg-open $URL
+#IP=$(hostname -I | xargs)
+#URL="http://$IP:8000"
+#echo $URL
+#xdg-open $URL
 
 
 

@@ -21,11 +21,7 @@ String.prototype.trimOver = function (length) {
 };
 
 function timeAgoFormatter(time) {
-    console.log("Now: " +  Date.now());
-    console.log("Time: " + time);
-    console.log("Time*1000: " + (1000*time));
-    console.log("Date(time*1000): " + new Date(1000 * time));
-    return timeago().format(Date.now() - new Date(1000 * time));
+    return "<div data-value=" + time + " >" + timeago().format(time*1000) + "<div>";
 }
 
 /*****************************************
@@ -55,9 +51,9 @@ function ajaxJobs(params) {
                 data: jobs,
             })
         },
-        error: function () {
-            alert('AJAX failed to load jobs');
-        }
+        // error: function () {
+        //     alert('AJAX failed to load jobs');
+        // }
     });
 }
 
@@ -72,12 +68,9 @@ function appendJobsData(data) {
 
 function generateTransitionField(transitions, index) {
     if (transitions[index]) {
-        let time = transitions[index][1];
-        return timeAgoFormatter(time);
+        return time = transitions[index][1];
     }
     else return null
-
-
 }
 
 
@@ -114,7 +107,15 @@ function jobNameFormatter(value, row) {
 }
 
 function jobUsageFormatter(value) {
-    return Math.floor(value * 100) + "&nbsp;%";
+    return "<div data-value="+ value +" >" + Math.floor(value * 100) + "&nbsp;%";
+}
+
+function jobStartedFormatter(value) {
+    return timeAgoFormatter(value);
+}
+
+function jobFinishedFormatter(value) {
+    return timeAgoFormatter(value);
 }
 
 
@@ -143,9 +144,9 @@ function ajaxSlaves(params) {
             });
             //updateJobsTable(jobs);
         },
-        error: function () {
-            alert('AJAX failed to load slaves');
-        }
+        // error: function () {
+        //     alert('AJAX failed to load slaves');
+        // }
     });
 }
 

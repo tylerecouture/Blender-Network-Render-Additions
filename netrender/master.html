@@ -58,10 +58,11 @@
   <section id="slaves">
     <h3 class="table-heading">Slaves</h3>
     <table id="slavesTable" class="bootstrap-table"
-           data-ajax="ajaxSlaves">
+           data-ajax="ajaxSlaves"
+           >
       <thead>
       <tr>
-        <th data-field="name">Name</th>
+        <th class="sortable" data-field="name">Name</th>
         <th data-field="address">Address</th>
         <th data-field="tags">Tags</th>
         <th data-field="last_seen" data-formatter="slaveLastSeenFormatter">Last Seen</th>
