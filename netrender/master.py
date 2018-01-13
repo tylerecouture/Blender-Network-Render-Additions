@@ -706,7 +706,7 @@ class RenderHandler(http.server.BaseHTTPRequestHandler):
                         if frame:
                             self.server.stats("", "Reset job frame")
                             frame.reset(all)
-                            self.send_head(content = None)
+                            self.send_head(http.client.NO_CONTENT)
                         else:
                             # no such frame
                             self.send_head(http.client.NO_CONTENT)
@@ -714,7 +714,7 @@ class RenderHandler(http.server.BaseHTTPRequestHandler):
                     else:
                         self.server.stats("", "Reset job")
                         job.reset(all)
-                        self.send_head(content = None)
+                        self.send_head(http.client.NO_CONTENT)
 
                 else: # job not found
                     self.send_head(http.client.NO_CONTENT)

@@ -34,25 +34,16 @@ const JOB_STATUS_TEXT = ["Waiting", "Paused", "Finished", "Queued"];
  *****************************************/
 
 function updateJobsData() {
-    // $('#jobsTable').bootstrapTable('load');
     $('#jobsTable').bootstrapTable('refresh');
+    console.log("Updaing Jobs Data");
 }
 
 function ajaxJobs(params) {
-    $.ajax({
-        type: 'GET',
-        url: '/html/jobs',
-        dataType: 'json',
-        contentType: 'application/json',
-        success: function (jobs) {
-            appendJobsData(jobs);
-            params.success({
-                data: jobs,
-            })
-        },
+    $.get('/html/jobs', function (data) {
+            appendJobsData(data);
+            params.success({ data: data, });
     });
 }
-
 
 function appendJobsData(data) {
     for (let i = 0; i < data.length; i++) {
@@ -74,8 +65,8 @@ function generateTransitionField(transitions, index) {
 
 function generateActionField(jobID, status) {
     let cancelBtn = generateActionButton(jobID, "Cancel Job", "jobCancel", "trash");
-    let pauseBtn = generateActionButton(jobID, "Pause Job", "jobPause", status == 3 ? "pause" : "play");
-    let resetBtn = generateActionButton(jobID, "Reset Job", "jobResetAll", "repeat");
+    let pauseBtn = generateActionButton(jobID, status==3 ? "Pause Job":"Resume Job", "jobPause", status==3 ? "pause":"play");
+    let resetBtn = generateActionButton(jobID, "Reset Entire Job", "jobResetAll", "repeat");
 
     return `<div id="actions-${jobID}" class="btn-group">${cancelBtn + pauseBtn + resetBtn}</div>`;
 
@@ -123,26 +114,8 @@ function jobFinishedFormatter(value) {
 
 
 function ajaxSlaves(params) {
-    // data you need
-    //console.log(params.data);
-    // just use setTimeout
-
-    $.ajax({
-        type: 'GET',
-        url: '/html/slaves',
-        dataType: 'json',
-        contentType: 'application/json',
-        success: function (slaves) {
-
-            params.success({
-                data: slaves,
-
-            });
-            //updateJobsTable(jobs);
-        },
-        // error: function () {
-        //     alert('AJAX failed to load slaves');
-        // }
+    $.get('/html/slaves', function (data) {
+            params.success({ data: data, });
     });
 }
 
@@ -153,7 +126,7 @@ function slaveJobFormatter(value, row) {
     if (row.job_id == 0)
         return "None";
     else
-        return '<a href="/html/job' + row.job_id + '" title="' + value + '">' + value.trimOver(20) + '</a>';
+        return `<a href="/html/job${row.job_id} title="${value}">${value.trimOver(20)}</a>`;
 }
 
 function slaveLastSeenFormatter(value) {
@@ -168,47 +141,22 @@ function slaveLastSeenFormatter(value) {
  *****************************************/
 
 function jobCancel(id) {
+    // @TODO There's an existing bug here if you try to delete a queued or paused job, that causes it to replicate and do weird things...
     modalAction("Delete Confirmation", "Also delete files on the master?", "sm");
     $('#modalAction .btn-no').click(function () {
-        $.ajax({
-            type: 'POST',
-            url: '/cancel_' + id,
-            dataType: 'json',
-            data: '{"clear":false}',
-            success: updateJobsData()
-        });
+        $.post(`/cancel_${id}`, {"clear":false}, updateJobsData );
     });
     $('#modalAction .btn-yes').click(function () {
-        $.ajax({
-            type: 'POST',
-            url: '/cancel_' + id,
-            dataType: 'json',
-            data: '{"clear":true}',
-            success: updateJobsData()
-        });
+        $.post(`/cancel_${id}`, {"clear":true}, updateJobsData );
     });
 }
 
 function jobPause(id) {
-
-    $.ajax({
-        type: 'POST',
-        url: '/pause_' + id,
-        //dataType: 'json',
-        //success: updateJobsData()
-        // throwing an error: XML Parsing Error: no root element found
-    });
-    updateJobsData()
+    $.post(`/pause_${id}`, updateJobsData);
 }
 
 function jobResetAll(id) {
-    $.ajax({
-        type: 'POST',
-        url: '/resetall_' + id + '_0',
-        dataType: 'json',
-        success: updateJobsData()
-    });
-    updateJobsData()
+    $.post(`/resetall_${id}_0`, updateJobsData);
 }
 
 /**
