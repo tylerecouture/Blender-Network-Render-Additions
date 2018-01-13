@@ -21,9 +21,11 @@ String.prototype.trimOver = function (length) {
 };
 
 function timeAgoFormatter(time) {
-    // the span allows the default alphabetical sorting to work
-    return '<span class="sort">'+time+'</span>' + timeago().format(time*1000);
+    // the sort span allows the default alphabetical sorting to work
+    return `<span class="sort">${time}</span><span title="${new Date(time)}">${timeago().format(time * 1000)}</span>`;
 }
+
+const JOB_STATUS_TEXT = ["Waiting", "Paused", "Finished", "Queued"];
 
 /*****************************************
  *
@@ -32,36 +34,29 @@ function timeAgoFormatter(time) {
  *****************************************/
 
 function updateJobsData() {
-    $('#jobsTable').bootstrapTable('refresh', '');
+    // $('#jobsTable').bootstrapTable('load');
+    $('#jobsTable').bootstrapTable('refresh');
 }
 
 function ajaxJobs(params) {
-    // data you need
-    //console.log(params.data);
-    // just use setTimeout
-
     $.ajax({
         type: 'GET',
         url: '/html/jobs',
         dataType: 'json',
         contentType: 'application/json',
         success: function (jobs) {
-            //console.log(jobs);
             appendJobsData(jobs);
             params.success({
                 data: jobs,
             })
         },
-        // error: function () {
-        //     alert('AJAX failed to load jobs');
-        // }
     });
 }
 
 
 function appendJobsData(data) {
     for (let i = 0; i < data.length; i++) {
-        data[i].actions = generateActionField(data[i].id);
+        data[i].actions = generateActionField(data[i].id, data[i].status);
         data[i].started = generateTransitionField(data[i].transitions, 0);
         data[i].startRaw = data[i].started;
         data[i].finished = generateTransitionField(data[i].transitions, 1);
@@ -77,24 +72,18 @@ function generateTransitionField(transitions, index) {
 }
 
 
+function generateActionField(jobID, status) {
+    let cancelBtn = generateActionButton(jobID, "Cancel Job", "jobCancel", "trash");
+    let pauseBtn = generateActionButton(jobID, "Pause Job", "jobPause", status == 3 ? "pause" : "play");
+    let resetBtn = generateActionButton(jobID, "Reset Job", "jobResetAll", "repeat");
 
-function generateActionField(jobID) {
-    let cancelBtn = generateActionButton(jobID, "Cancel Job", "cancel_job", "trash");
-    let pauseBtn = generateActionButton(jobID, "Pause Job", "pause_job", "pause");
-    let resetBtn = generateActionButton(jobID, "Reset Job", "reset_job_frames", "repeat");
-
-    let html = '<div class="btn-group">';
-    html += cancelBtn;
-    html += pauseBtn;
-    html += resetBtn;
-    html += '</div>';
-
-    return html;
+    return `<div id="actions-${jobID}" class="btn-group">${cancelBtn + pauseBtn + resetBtn}</div>`;
 
     function generateActionButton(jobID, title, action, icon) {
-        return '<button type="button" class="btn btn-xs btn-default" ' +
-            'onclick="' + action + '(' + jobID + ');" title="' + title + '">' +
-            '<i class="glyphicon glyphicon-' + icon + '"></i></button>';
+        return `<button type="button" class="btn btn-xs btn-default btn-${icon}" title="${title}"
+                  onclick="${action}(${jobID});">
+                  <i class="glyphicon glyphicon-${icon}"></i>
+                </button>`;
     }
 }
 
@@ -106,11 +95,15 @@ function generateActionField(jobID) {
  */
 
 function jobNameFormatter(value, row) {
-    return '<a href="/html/job' + row.id + '" title="' + value + '">' + value.trimOver(20) + '</a>';
+    return `<a href="/html/job${row.id}" title="${value}">${value.trimOver(20)}</a>`;
 }
 
 function jobUsageFormatter(value) {
-    return '<span class="sort">'+value+'</span>' + Math.floor(value * 100) + "&nbsp;%";
+    return `<span class="sort">${value}</span>${Math.floor(value * 100)}&nbsp;%`;
+}
+
+function jobStatusFormatter(value) {
+    return JOB_STATUS_TEXT[value];
 }
 
 function jobStartedFormatter(value) {
@@ -168,9 +161,68 @@ function slaveLastSeenFormatter(value) {
 }
 
 
+/*****************************************
+ *
+ *             JOB ACTIONS
+ *
+ *****************************************/
 
+function jobCancel(id) {
+    modalAction("Delete Confirmation", "Also delete files on the master?", "sm");
+    $('#modalAction .btn-no').click(function () {
+        $.ajax({
+            type: 'POST',
+            url: '/cancel_' + id,
+            dataType: 'json',
+            data: '{"clear":false}',
+            success: updateJobsData()
+        });
+    });
+    $('#modalAction .btn-yes').click(function () {
+        $.ajax({
+            type: 'POST',
+            url: '/cancel_' + id,
+            dataType: 'json',
+            data: '{"clear":true}',
+            success: updateJobsData()
+        });
+    });
+}
 
+function jobPause(id) {
 
+    $.ajax({
+        type: 'POST',
+        url: '/pause_' + id,
+        //dataType: 'json',
+        //success: updateJobsData()
+        // throwing an error: XML Parsing Error: no root element found
+    });
+    updateJobsData()
+}
+
+function jobResetAll(id) {
+    $.ajax({
+        type: 'POST',
+        url: '/resetall_' + id + '_0',
+        dataType: 'json',
+        success: updateJobsData()
+    });
+    updateJobsData()
+}
+
+/**
+ * Format template for a Boostrap modal dialog
+ * https://getbootstrap.com/docs/3.3/javascript/#modals
+ * @param size: sm, md, or lg
+ */
+function modalAction(title, content, size) {
+    let $modal = $('#modalAction');
+    $modal.find('.modal-title').text(title);
+    $modal.find('.modal-body').html(content);
+    $modal.find('.modal-dialog').addClass("modal-" + size);
+    $modal.modal();  //display
+}
 
 
 /******************************************************************************************************************************************/
@@ -186,7 +238,7 @@ var slaveTableHeader = ["name", "last_seen", "stats", "address"];
 var jobTableHeader = ["action", "id", "name", "category", "tags", "type", "chunks", "priority", "usage", "wait", "status", "length", "done", "dispatched", "error", "priority r", "exception r"];
 var framesTableHeader = ["no", "status", "render time", "slave", "log", "result"];
 var JOB_TYPES = ["None", "Blender", "Process", "Versioned"];
-var JOB_STATUS_TEXT = ["Waiting", "Paused", "Finished", "Queued"];
+//var JOB_STATUS_TEXT = ["Waiting", "Paused", "Finished", "Queued"];
 var JOB_SUBTYPE = ["None", "BLENDER", "CYCLE"];
 var FRAME_STATUS_TEXT = ["Queued", "Dispatched", "Done", "error"];
 var JOB_TYPE_NONE = 0;
@@ -352,34 +404,6 @@ function changeJobsTable(jobs) {
         return row[name];
     }
 
-
-}
-
-function setupSlavesPanel() {
-    createPanelwidget("body", "slaves", "Slaves", "");
-    updateSlavesData();
-
-}
-
-
-$("#slavesTable button").button();
-
-function updateSlavesData() {
-    $.ajax({
-        type: 'GET',
-        url: '/html/slaves',
-        dataType: 'json',
-        contentType: 'application/json',
-        success: function (slaves) {
-            changeSlaveTable(slaves);
-        }
-    });
-}
-
-function changeSlaveTable(slaves) {
-
-    createTable("#slaves_Panelcontent", "slavesTable", slaveTableHeaderWithJob, slaves, cellSlaveTable);
-    $("#slavesTable button").button();
 
 }
 

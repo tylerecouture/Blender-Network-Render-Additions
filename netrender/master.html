@@ -43,6 +43,7 @@
         <th data-field="priority" data-visible="false">Priority</th>
         <th data-field="usage" data-formatter="jobUsageFormatter">Usage</th>
         <th data-field="wait">Wait</th>
+        <th data-field="status" data-formatter="jobStatusFormatter">Status</th>
         <th data-field="length">Frames</th>
         <th data-field="done">Done</th>
         <th data-field="dispatched">Sent</th>
@@ -60,7 +61,7 @@
     <h3 class="table-heading">Slaves</h3>
     <table id="slavesTable" class="bootstrap-table"
            data-ajax="ajaxSlaves"
-           >
+    >
       <thead>
       <tr>
         <th class="sortable" data-field="name">Name</th>
@@ -84,12 +85,31 @@
   </footer>
 </div>
 
+<div class="modal fade" id="modalAction" tabindex="-1" role="dialog" aria-labelledby="modalActionLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+            aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="modalActionLabel">Title</h4>
+      </div>
+      <div class="modal-body">
+        Content
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default btn-no" data-dismiss="modal">No</button>
+        <button type="button" class="btn btn-primary btn-yes" data-dismiss="modal">Yes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script type="text/javascript" src="/html/js/jquery.min.js"></script>
 <script type="text/javascript" src="/html/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="/html/js/bootstrap-table.min.js"></script>
 <script type="text/javascript" src="/html/js/timeago.min.js"></script>
 <script type="text/javascript" src="/html/js/master.js"></script>
-<script type="text/javascript" src="/html/js/netrender-action.js"></script>
+<!--<script type="text/javascript" src="/html/js/netrender-action.js"></script>-->
 
 <script>
     //var allJobFields = ['id', 'name', 'category', 'tags', 'type', 'chunks', 'priority', 'usage', 'wait', 'length', 'done', 'dispatched', 'error', 'priority', 'exception']
@@ -104,10 +124,9 @@
 
         $bsTables.bootstrapTable();
 
-        setInterval(function(){
-          $bsTables.bootstrapTable('refresh');
+        setInterval(function () {
+            $bsTables.bootstrapTable('refresh');
         }, 5000);
-
 
 
     });
