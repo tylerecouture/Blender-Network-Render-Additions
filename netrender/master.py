@@ -671,7 +671,7 @@ class RenderHandler(http.server.BaseHTTPRequestHandler):
                 if job:
                     self.server.stats("", "Pausing job")
                     job.pause(status)
-                    self.send_head(http.client.NO_CONTENT) #content = None)
+                    self.send_head(http.client.NO_CONTENT)
                 else:
                     # no such job id
                     self.send_head(http.client.NO_CONTENT)
@@ -687,7 +687,7 @@ class RenderHandler(http.server.BaseHTTPRequestHandler):
             self.server.stats("", "Clearing jobs")
             self.server.clear(clear)
 
-            self.send_head(content = None)
+            self.send_head(http.client.NO_CONTENT)
         # =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
         elif self.path.startswith("/reset"):
             match = reset_pattern.match(self.path)
@@ -750,7 +750,7 @@ class RenderHandler(http.server.BaseHTTPRequestHandler):
                 if job:
                     self.server.stats("", "Log announcement")
                     job.addLog(log_info.frames)
-                    self.send_head(content = None)
+                    self.send_head(http.client.NO_CONTENT)
                 else:
                     # no such job id
                     self.send_head(http.client.NO_CONTENT)
@@ -801,7 +801,7 @@ class RenderHandler(http.server.BaseHTTPRequestHandler):
                             self.send_head(http.client.CONFLICT)
                         elif job.testStart(): # started correctly
                             self.server.stats("", "File upload, starting job")
-                            self.send_head(content = None)
+                            self.send_head(http.client.NO_CONTENT)
                         else:
                             self.server.stats("", "File upload, dependency files still missing")
                             self.send_head(http.client.ACCEPTED)
@@ -835,7 +835,7 @@ class RenderHandler(http.server.BaseHTTPRequestHandler):
                     frame = job[job_frame]
 
                     if frame:
-                        self.send_head(content = None)
+                        self.send_head(http.client.NO_CONTENT)
 
                         if job.hasRenderResult():
                             if job_result == netrender.model.FRAME_DONE:
@@ -883,7 +883,7 @@ class RenderHandler(http.server.BaseHTTPRequestHandler):
                         job_result = int(self.headers['job-result'])
                         job_finished = self.headers['job-finished'] == str(True)
                         
-                        self.send_head(content = None)
+                        self.send_head(http.client.NO_CONTENT)
 
                         if job_result == netrender.model.FRAME_DONE:
                             result_filename = self.headers['result-filename']
@@ -924,7 +924,7 @@ class RenderHandler(http.server.BaseHTTPRequestHandler):
                     frame = job[job_frame]
 
                     if frame:
-                        self.send_head(content = None)
+                        self.send_head(http.client.NO_CONTENT)
                         
                         if job.hasRenderResult():
                             self.write_file(os.path.join(os.path.join(job.save_path, "%06d.jpg" % job_frame)))
@@ -952,7 +952,7 @@ class RenderHandler(http.server.BaseHTTPRequestHandler):
                     frame = job[job_frame]
 
                     if frame and frame.log_path:
-                        self.send_head(content = None)
+                        self.send_head(http.client.NO_CONTENT)
 
                         self.write_file(frame.log_path, 'ab')
 

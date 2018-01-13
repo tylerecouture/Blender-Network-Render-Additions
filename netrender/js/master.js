@@ -225,26 +225,7 @@ function setupPage() {
     // var refreshJobsData = window.setInterval(updateJobsData, 5000);
 }
 
-// function ajaxJobs(params) {
-//     // data you need
-//     console.log(params.data);
-//     // just use setTimeout
-//
-//     $.ajax({
-// 		type : 'GET',
-// 		url : '/html/jobs',
-// 		dataType : 'json',
-// 		contentType : 'application/json',
-// 		success : function(jobs) {
-// 		    params.success({
-//                 "rows": jobs,
-//                 "total": jobs.length
-//             })
-// 		    console.log(jobs);
-// 			//updateJobsTable(jobs);
-// 		}
-// 	});
-// }
+
 
 
 function changeJobsTable(jobs) {
