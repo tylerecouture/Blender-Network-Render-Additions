@@ -21,7 +21,8 @@ String.prototype.trimOver = function (length) {
 };
 
 function timeAgoFormatter(time) {
-    return "<div data-value=" + time + " >" + timeago().format(time*1000) + "<div>";
+    // the span allows the default alphabetical sorting to work
+    return '<span class="sort">'+time+'</span>' + timeago().format(time*1000);
 }
 
 /*****************************************
@@ -62,7 +63,9 @@ function appendJobsData(data) {
     for (let i = 0; i < data.length; i++) {
         data[i].actions = generateActionField(data[i].id);
         data[i].started = generateTransitionField(data[i].transitions, 0);
+        data[i].startRaw = data[i].started;
         data[i].finished = generateTransitionField(data[i].transitions, 1);
+        data[i].finishRaw = data[i].finished;
     }
 }
 
@@ -107,7 +110,7 @@ function jobNameFormatter(value, row) {
 }
 
 function jobUsageFormatter(value) {
-    return "<div data-value="+ value +" >" + Math.floor(value * 100) + "&nbsp;%";
+    return '<span class="sort">'+value+'</span>' + Math.floor(value * 100) + "&nbsp;%";
 }
 
 function jobStartedFormatter(value) {

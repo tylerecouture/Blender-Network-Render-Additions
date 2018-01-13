@@ -19,3 +19,6 @@ td {
     white-space: nowrap;
 }
 
+span.sort {
+     display: none;
+}

@@ -27,6 +27,7 @@
            data-search="true"
            data-sort-name="id"
            data-sort-order="desc"
+           data-striped="true"
     >
 
       <thead>
@@ -42,14 +43,14 @@
         <th data-field="priority" data-visible="false">Priority</th>
         <th data-field="usage" data-formatter="jobUsageFormatter">Usage</th>
         <th data-field="wait">Wait</th>
-        <th data-field="length">Length</th>
+        <th data-field="length">Frames</th>
         <th data-field="done">Done</th>
         <th data-field="dispatched">Sent</th>
         <th data-field="error">Error</th>
         <th data-field="priority">Priority</th>
         <th data-field="exception">Exception</th>
-        <th data-field="started">Started</th>
-        <th data-field="finished">Finished</th>
+        <th data-field="started" data-formatter="jobStartedFormatter">Started</th>
+        <th data-field="finished" data-formatter="jobFinishedFormatter">Finished</th>
       </tr>
       </thead>
     </table>
