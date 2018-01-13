@@ -7,15 +7,17 @@ DEVNETRENDERLOC=/home/$USER/Developer/Blender-Network-Render-Additions/netrender
 # copy latest netrender code to Blender addons
 cp -rf $DEVNETRENDERLOC $BLENDERLOC/$BLVERS/scripts/addons/
 
+
 # stop blender master and slave and others...stop all blenders
 pkill -f blender
+sleep 3
 
 BLENDPARAMS="--addons netrender -a -noaudio -nojoystick --enable-autoexec"
-x-terminal-emulator -e "$BLENDERLOC/blender -b master.blend $BLENDPARAMS"
+RENDERPARAMS="--engine NET_RENDER -a"
+gnome-terminal -e "$BLENDERLOC/blender -b master.blend $BLENDPARAMS"
 sleep 1
-x-terminal-emulator -e "$BLENDERLOC/blender -b slave.blend $BLENDPARAMS"
-
-sleep 1
+gnome-terminal -e "$BLENDERLOC/blender -b slave.blend $BLENDPARAMS"
+#gnome-terminal -e "$BLENDERLOC/blender -b renderTest.blend $BLENDPARAMS $RENDERPARAMS"
 
 IP=$(hostname -I | xargs)
 URL="http://$IP:8000"

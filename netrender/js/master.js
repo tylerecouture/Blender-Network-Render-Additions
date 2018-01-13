@@ -20,6 +20,13 @@ String.prototype.trimOver = function (length) {
     return this.length > length ? this.substring(0, length) + "..." : this;
 };
 
+function timeAgoFormatter(time) {
+    console.log("Now: " +  Date.now());
+    console.log("Time: " + time);
+    console.log("Time*1000: " + (1000*time));
+    console.log("Date(time*1000): " + new Date(1000 * time));
+    return timeago().format(Date.now() - new Date(1000 * time));
+}
 
 /*****************************************
  *
@@ -47,7 +54,6 @@ function ajaxJobs(params) {
             params.success({
                 data: jobs,
             })
-            //updateJobsTable(jobs);
         },
         error: function () {
             alert('AJAX failed to load jobs');
@@ -55,11 +61,26 @@ function ajaxJobs(params) {
     });
 }
 
+
 function appendJobsData(data) {
     for (let i = 0; i < data.length; i++) {
         data[i].actions = generateActionField(data[i].id);
+        data[i].started = generateTransitionField(data[i].transitions, 0);
+        data[i].finished = generateTransitionField(data[i].transitions, 1);
     }
 }
+
+function generateTransitionField(transitions, index) {
+    if (transitions[index]) {
+        let time = transitions[index][1];
+        return timeAgoFormatter(time);
+    }
+    else return null
+
+
+}
+
+
 
 function generateActionField(jobID) {
     let cancelBtn = generateActionButton(jobID, "Cancel Job", "cancel_job", "trash");
@@ -139,8 +160,10 @@ function slaveJobFormatter(value, row) {
 }
 
 function slaveLastSeenFormatter(value) {
-    return timeago().format(Date.now() - Date(1000 * value));
+    return timeAgoFormatter(value);
 }
+
+
 
 
 
