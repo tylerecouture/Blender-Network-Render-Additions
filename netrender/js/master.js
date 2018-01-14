@@ -48,6 +48,7 @@ function ajaxJobs(params) {
 function appendJobsData(data) {
     for (let i = 0; i < data.length; i++) {
         data[i].actions = generateActionField(data[i].id, data[i].status);
+        console.log(data[i].transitions);
         data[i].started = generateTransitionField(data[i].transitions, 0);
         data[i].startRaw = data[i].started;
         data[i].finished = generateTransitionField(data[i].transitions, 1);
@@ -59,7 +60,7 @@ function generateTransitionField(transitions, index) {
     if (transitions[index]) {
         return time = transitions[index][1];
     }
-    else return null
+    else return 0;
 }
 
 
@@ -98,10 +99,14 @@ function jobStatusFormatter(value) {
 }
 
 function jobStartedFormatter(value) {
+    if (value == 0)
+        return "not started"
     return timeAgoFormatter(value);
 }
 
 function jobFinishedFormatter(value) {
+    if (value == 0)
+        return "not finished"
     return timeAgoFormatter(value);
 }
 
