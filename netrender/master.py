@@ -606,7 +606,7 @@ class RenderHandler(http.server.BaseHTTPRequestHandler):
                     info_map = self.getInfoMap()
 
                     job.edit(info_map)
-                    self.send_head(content = None)
+                    self.send_head(http.client.NO_CONTENT) #content = None)
                 else:
                     # no such job id
                     self.send_head(http.client.NO_CONTENT)

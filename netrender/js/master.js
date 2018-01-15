@@ -43,7 +43,7 @@ const JOB_STATUS_TEXT = ["Waiting", "Paused", "Finished", "Queued"];
 
 function updateJobsData() {
     $('#jobsTable').bootstrapTable('refresh');
-    console.log("Updaing Jobs Data");
+    console.log("Updating Jobs Data");
 }
 
 function ajaxJobs(params) {
@@ -56,7 +56,6 @@ function ajaxJobs(params) {
 function appendJobsData(data) {
     for (let i = 0; i < data.length; i++) {
         data[i].actions = generateActionField(data[i].id, data[i].status);
-        console.log(data[i].transitions);
         data[i].started = generateTransitionField(data[i].transitions, 0);
         data[i].startRaw = data[i].started;
         data[i].finished = generateTransitionField(data[i].transitions, 1);
@@ -74,15 +73,16 @@ function generateTransitionField(transitions, index) {
 
 function generateActionField(jobID, status) {
     // status: 2 = Finished, 3 = Queued
-    console.log(status)
     let cancelBtn = generateActionButton(jobID, "Cancel Job", "jobCancel", "trash", true);
     let pauseBtn = generateActionButton(jobID, status==3 ? "Pause Job":"Resume Job", "jobPause", status==3 ? "pause":"play", status!=2);
     let resetBtn = generateActionButton(jobID, "Reset Entire Job", "jobResetAll", "repeat", status!=2);
 
-    return `<div id="actions-${jobID}" class="btn-group">${cancelBtn + pauseBtn + resetBtn}</div>`;
+    return `<div id="actions-${jobID}" class="btn-group btn-group-sm no-wrap" aria-label="Action buttons">
+              ${cancelBtn + pauseBtn + resetBtn}
+            </div>`;
 
     function generateActionButton(jobID, title, action, icon, isEnabled=true) {
-        return `<button type="button" class="btn btn-xs btn-default btn-${icon}" title="${title}"
+        return `<button role="button" class="btn btn-default btn-${icon}" title="${title}"
                   onclick="${action}(${jobID});" ${isEnabled?"":"disabled=true"}>
                   <i class="glyphicon glyphicon-${icon}"></i>
                 </button>`;
@@ -118,6 +118,20 @@ function jobFinishedFormatter(value) {
     if (value == 0)
         return "not finished"
     return timeAgoFormatter(value);
+}
+
+function chunksFormatter(value, row) {
+    return `${value}
+            <div class="btn-group-vertical spinner-right" role="group" aria-label="Chunk adjustments">
+              <button role="button" class="btn btn-default" title="Increase chunks by 1"
+                      onClick="changeJobChunk(${row.id},${value+1})">
+                <i class="glyphicon glyphicon-chevron-up"></i>
+              </button>
+              <button role="button" class="btn btn-default"  title="Decrease chunks by 1"
+                      onClick="changeJobChunk(${row.id},${value-1})">
+                <i class="glyphicon glyphicon-chevron-down"></i>
+              </button>
+            </div>`
 }
 
 
@@ -172,6 +186,10 @@ function jobPause(id) {
 
 function jobResetAll(id) {
     $.post(`/resetall_${id}_0`, updateJobsData);
+}
+
+function changeJobChunk(id, value) {
+    $.post(`/edit_${id}`, `{"chunks":${value}}`, updateJobsData);
 }
 
 /**
