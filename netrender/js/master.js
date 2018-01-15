@@ -173,11 +173,12 @@ function jobCancel(id) {
     // @TODO There's an existing bug here if you try to delete a queued or paused job, that causes it to replicate and do weird things...
     modalAction("Delete Confirmation", "Also delete files on the master?", "sm");
     $('#modalAction .btn-no').click(function () {
-        $.post(`/cancel_${id}`, {"clear":false}, updateJobsData );
+        $.post(`/cancel_${id}`, `{"clear":false}`, updateJobsData );
     });
     $('#modalAction .btn-yes').click(function () {
-        $.post(`/cancel_${id}`, {"clear":true}, updateJobsData );
+        $.post(`/cancel_${id}`, `{"clear":true}`, updateJobsData );
     });
+
 }
 
 function jobPause(id) {
