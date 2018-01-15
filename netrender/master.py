@@ -649,7 +649,7 @@ class RenderHandler(http.server.BaseHTTPRequestHandler):
                 if job:
                     self.server.stats("", "Cancelling job")
                     self.server.removeJob(job, clear)
-                    self.send_head(content = None)
+                    self.send_head(http.client.NO_CONTENT) #content = None)
                 else:
                     # no such job id
                     self.send_head(http.client.NO_CONTENT)
