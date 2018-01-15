@@ -16,6 +16,14 @@
  #
  # ##### END GPL LICENSE BLOCK #####*/
 
+// const JOB_STATUS = {
+//     WAITING: 0,
+//     PAUSED: 1,
+//     FINISHED: 2,
+//     QUEUED: 3,
+// }
+
+
 String.prototype.trimOver = function (length) {
     return this.length > length ? this.substring(0, length) + "..." : this;
 };
@@ -65,15 +73,17 @@ function generateTransitionField(transitions, index) {
 
 
 function generateActionField(jobID, status) {
-    let cancelBtn = generateActionButton(jobID, "Cancel Job", "jobCancel", "trash");
-    let pauseBtn = generateActionButton(jobID, status==3 ? "Pause Job":"Resume Job", "jobPause", status==3 ? "pause":"play");
-    let resetBtn = generateActionButton(jobID, "Reset Entire Job", "jobResetAll", "repeat");
+    // status: 2 = Finished, 3 = Queued
+    console.log(status)
+    let cancelBtn = generateActionButton(jobID, "Cancel Job", "jobCancel", "trash", true);
+    let pauseBtn = generateActionButton(jobID, status==3 ? "Pause Job":"Resume Job", "jobPause", status==3 ? "pause":"play", status!=2);
+    let resetBtn = generateActionButton(jobID, "Reset Entire Job", "jobResetAll", "repeat", status!=2);
 
     return `<div id="actions-${jobID}" class="btn-group">${cancelBtn + pauseBtn + resetBtn}</div>`;
 
-    function generateActionButton(jobID, title, action, icon) {
+    function generateActionButton(jobID, title, action, icon, isEnabled=true) {
         return `<button type="button" class="btn btn-xs btn-default btn-${icon}" title="${title}"
-                  onclick="${action}(${jobID});">
+                  onclick="${action}(${jobID});" ${isEnabled?"":"disabled=true"}>
                   <i class="glyphicon glyphicon-${icon}"></i>
                 </button>`;
     }
