@@ -671,7 +671,7 @@ class RenderHandler(http.server.BaseHTTPRequestHandler):
                 if job:
                     self.server.stats("", "Pausing job")
                     job.pause(status)
-                    self.send_head(http.client.NO_CONTENT)
+                    self.send_head(http.client.NO_CONTENT) #content = None)
                 else:
                     # no such job id
                     self.send_head(http.client.NO_CONTENT)
@@ -687,7 +687,7 @@ class RenderHandler(http.server.BaseHTTPRequestHandler):
             self.server.stats("", "Clearing jobs")
             self.server.clear(clear)
 
-            self.send_head(http.client.NO_CONTENT)
+            self.send_head(content = None)
         # =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
         elif self.path.startswith("/reset"):
             match = reset_pattern.match(self.path)
@@ -728,7 +728,7 @@ class RenderHandler(http.server.BaseHTTPRequestHandler):
             self.server.stats("", "New slave connected")
 
             slave_info = netrender.model.RenderSlave.materialize(json.loads(str(self.rfile.read(length), encoding='utf8')), cache = False)
-            
+
             slave_info.address = self.client_address
 
             slave_id = self.server.addSlave(slave_info)
@@ -750,7 +750,7 @@ class RenderHandler(http.server.BaseHTTPRequestHandler):
                 if job:
                     self.server.stats("", "Log announcement")
                     job.addLog(log_info.frames)
-                    self.send_head(http.client.NO_CONTENT)
+                    self.send_head(content = None)
                 else:
                     # no such job id
                     self.send_head(http.client.NO_CONTENT)
@@ -790,18 +790,18 @@ class RenderHandler(http.server.BaseHTTPRequestHandler):
                             file_path = os.path.join(job.save_path, main_name)
 
                         # add same temp file + renames as slave
-                        
+
                         self.write_file(file_path)
-                        
+
                         rfile.filepath = file_path # set the new path
                         found = rfile.updateStatus() # make sure we have the right file
-                        
+
                         if not found: # checksum mismatch
                             self.server.stats("", "File upload but checksum mismatch, this shouldn't happen")
                             self.send_head(http.client.CONFLICT)
                         elif job.testStart(): # started correctly
                             self.server.stats("", "File upload, starting job")
-                            self.send_head(http.client.NO_CONTENT)
+                            self.send_head(content = None)
                         else:
                             self.server.stats("", "File upload, dependency files still missing")
                             self.send_head(http.client.ACCEPTED)
@@ -835,7 +835,7 @@ class RenderHandler(http.server.BaseHTTPRequestHandler):
                     frame = job[job_frame]
 
                     if frame:
-                        self.send_head(http.client.NO_CONTENT)
+                        self.send_head(content = None)
 
                         if job.hasRenderResult():
                             if job_result == netrender.model.FRAME_DONE:
@@ -882,19 +882,19 @@ class RenderHandler(http.server.BaseHTTPRequestHandler):
                     if frame:
                         job_result = int(self.headers['job-result'])
                         job_finished = self.headers['job-finished'] == str(True)
-                        
-                        self.send_head(http.client.NO_CONTENT)
+
+                        self.send_head(content = None)
 
                         if job_result == netrender.model.FRAME_DONE:
                             result_filename = self.headers['result-filename']
-                            
+
                             frame.results.append(result_filename)
                             self.write_file(job.getResultPath(result_filename))
-                            
+
                         if job_finished:
                             job_time = float(self.headers['job-time'])
                             slave.finishedFrame(job_frame)
-    
+
                             frame.status = job_result
                             frame.time = job_time
 
@@ -924,8 +924,8 @@ class RenderHandler(http.server.BaseHTTPRequestHandler):
                     frame = job[job_frame]
 
                     if frame:
-                        self.send_head(http.client.NO_CONTENT)
-                        
+                        self.send_head(content = None)
+
                         if job.hasRenderResult():
                             self.write_file(os.path.join(os.path.join(job.save_path, "%06d.jpg" % job_frame)))
 
@@ -952,7 +952,7 @@ class RenderHandler(http.server.BaseHTTPRequestHandler):
                     frame = job[job_frame]
 
                     if frame and frame.log_path:
-                        self.send_head(http.client.NO_CONTENT)
+                        self.send_head(content = None)
 
                         self.write_file(frame.log_path, 'ab')
 
